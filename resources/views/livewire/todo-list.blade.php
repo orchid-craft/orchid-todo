@@ -79,13 +79,13 @@
                     <h3 class="text-lg font-bold text-gray-800">
                         {{ $showTrashed ? 'Trash Bin (Archived Tasks)' : 'Task Dynamic List' }}
                     </h3>
-                    <span class="text-xs font-medium text-gray-400" mt-0.5>
+                    <span class="text-xs font-medium text-gray-400 mt-0.5">
                         {{ $showTrashed ? 'Showing soft-deleted records' : 'Real-time Updates'}}
                     </span>
 
                     <button 
                         wire:click="toggleTrashMode"
-                        class="inline-flex items-center gap-1-5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 {{ $showTrashed ? 'bg-slate-100 text-slate-700 hover:bg-slate-200' : 'bg-red-50 text-red-600 hover:bg-red-100'}}">
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 {{ $showTrashed ? 'bg-slate-100 text-slate-700 hover:bg-slate-200' : 'bg-red-50 text-red-600 hover:bg-red-100'}}">
                         @if($showTrashed)
                             ⬅️ Back to Active Tasks
                         @else
@@ -127,7 +127,7 @@
                         <span class="mr-1.5 text-gray-400 uppercase tracking-wider text-[10px]">
                             category filter:
                         </span>
-                        <button wire:click="set('filterCategory','all')" class="px-3 py-1.5 rounded-md capitalize transition border {{ $filterCategory === 'all' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-gray-200 hover:bg-gray-50'}}">
+                        <button wire:click="$set('filterCategory','all')" class="px-3 py-1.5 rounded-md capitalize transition border {{ $filterCategory === 'all' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-gray-200 hover:bg-gray-50'}}">
                             all categories
                         </button>
                         @foreach($categoryList as $cat)
@@ -141,7 +141,7 @@
                 <ul class="space-y-3">
                     @forelse($todos as $todo)
                         <li class="flex items-center justify-between p-4 rounded-xl border transition-all duration-200 group {{ $todo->is_completed ? 'bg-gray-50/70 border-gray-100 opacity-60' : 'bg-white border-gray-100 hover:border-indigo-100 hover:shadow-sm' }}">
-                            <div class="flex items-center gap-3.5 flex-1">
+                            <div class="flex min-w-0 flex-1 items-center gap-3.5">
                                 <input 
                                     type="checkbox"
                                     wire:click="toggleTodo({{ $todo->id }})"
@@ -149,13 +149,32 @@
                                     {{ $showTrashed ? 'disabled' : ''}}
                                     class="w-5 h-5 rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 cursor-pointer"
                                 >
-                                <div class="flex flex-col">
-                                    <span class="text-sm font-medium transition-all duration-150 {{ $todo->is_completed ? 'line-through text-gray-400' : 'text-gray-700' }}">
-                                        {{ $todo->task }}
-                                    </span>
-                                    
-                                    <span class="text-[11px] text-gray-400 mt-0.5 font-normal tracking-wide">
-                                        ⏱️ Created {{ $todo->created_at->setTimezone('Asia/Jakarta')->diffForHumans() }}
+                                <div class="flex min-w-0 flex-col">
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="min-w-0 break-words text-sm font-medium transition-all duration-150 {{ $todo->is_completed ? 'line-through text-gray-400' : 'text-gray-700' }}">
+                                            {{ $todo->task }}
+                                        </span>
+
+                                        @php
+                                            $categoryStyles = [
+                                                'work' => 'bg-blue-50 text-blue-600 border-blue-100',
+                                                'personal' => 'bg-purple-50 text-purple-600 border-purple-100',
+                                                'shopping' => 'bg-pink-50 text-pink-600 border-pink-100',
+                                                'health' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                            ];
+
+                                            $category = strtolower((string) $todo->category);
+                                            $categoryStyle = $categoryStyles[$category] ?? 'bg-slate-50 text-slate-600 border-slate-100';
+                                            $categoryLabel = $category !== '' ? ucfirst($category) : 'Uncategorized';
+                                        @endphp
+
+                                        <span class="inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide {{ $categoryStyle }}">
+                                            {{ $categoryLabel }}
+                                        </span>
+                                    </div>
+
+                                    <span class="text-[11px] text-gray-400 mt-1 font-normal tracking-wide">
+                                        ⏱️ Created: {{ $todo->created_at->setTimezone('Asia/Jakarta')->translatedFormat('d M Y, H:i') }} WIB
                                     </span>
                                 </div>
                             </div>
