@@ -150,31 +150,29 @@
                                     class="w-5 h-5 rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 cursor-pointer"
                                 >
                                 <div class="flex min-w-0 flex-col">
-                                    <div class="flex items-center gap-2 flex-wrap">
-                                        <span class="min-w-0 break-words text-sm font-medium transition-all duration-150 {{ $todo->is_completed ? 'line-through text-gray-400' : 'text-gray-700' }}">
-                                            {{ $todo->task }}
-                                        </span>
+                                    @php
+                                        $categoryStyles = [
+                                            'work' => 'bg-blue-50 text-blue-600 border-blue-100',
+                                            'personal' => 'bg-purple-50 text-purple-600 border-purple-100',
+                                            'shopping' => 'bg-pink-50 text-pink-600 border-pink-100',
+                                            'health' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                        ];
 
-                                        @php
-                                            $categoryStyles = [
-                                                'work' => 'bg-blue-50 text-blue-600 border-blue-100',
-                                                'personal' => 'bg-purple-50 text-purple-600 border-purple-100',
-                                                'shopping' => 'bg-pink-50 text-pink-600 border-pink-100',
-                                                'health' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
-                                            ];
+                                        $category = strtolower((string) $todo->category);
+                                        $categoryStyle = $categoryStyles[$category] ?? 'bg-slate-50 text-slate-600 border-slate-100';
+                                        $categoryLabel = $category !== '' ? ucfirst($category) : 'Uncategorized';
+                                    @endphp
 
-                                            $category = strtolower((string) $todo->category);
-                                            $categoryStyle = $categoryStyles[$category] ?? 'bg-slate-50 text-slate-600 border-slate-100';
-                                            $categoryLabel = $category !== '' ? ucfirst($category) : 'Uncategorized';
-                                        @endphp
-
-                                        <span class="inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide {{ $categoryStyle }}">
-                                            {{ $categoryLabel }}
-                                        </span>
-                                    </div>
+                                    <span class="min-w-0 break-words text-sm font-medium transition-all duration-150 {{ $todo->is_completed ? 'line-through text-gray-400' : 'text-gray-700' }}">
+                                        {{ $todo->task }}
+                                    </span>
 
                                     <span class="text-[11px] text-gray-400 mt-1 font-normal tracking-wide">
                                         ⏱️ Created: {{ $todo->created_at->setTimezone('Asia/Jakarta')->translatedFormat('d M Y, H:i') }} WIB
+                                    </span>
+
+                                    <span class="mt-2 inline-flex w-fit items-center rounded-md border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide {{ $categoryStyle }}">
+                                        {{ $categoryLabel }}
                                     </span>
                                 </div>
                             </div>
